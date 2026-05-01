@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LUMAE Beauty Atelier — Dubai</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; background: #0D0D0D; color: #FAFAFA; cursor: none; overflow-x: hidden; }
+      #cursor-dot {
+        width: 8px; height: 8px; background: #C9A96E; border-radius: 50%;
+        position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999;
+        transform: translate(-50%, -50%); transition: transform 0.15s ease, opacity 0.2s ease;
+      }
+      #cursor-ring {
+        width: 32px; height: 32px; border: 1px solid rgba(201,169,110,0.4); border-radius: 50%;
+        position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99998;
+        transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s;
+      }
+      #cursor-dot.expanded { transform: translate(-50%,-50%) scale(3); opacity: 0.25; }
+      #cursor-ring.expanded { width: 56px; height: 56px; }
+    </style>
+    <script type="module" crossorigin src="/assets/index-Cw0xi7Wh.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BcaUmSRi.css">
+  </head>
+  <body>
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+    <div id="root"></div>
+    <script>
+      const dot = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      let mx=-100,my=-100,rx=-100,ry=-100;
+      document.addEventListener('mousemove', e => {
+        mx=e.clientX; my=e.clientY;
+        dot.style.left=mx+'px'; dot.style.top=my+'px';
+        const el = e.target;
+        const interactive = el.tagName==='A'||el.tagName==='BUTTON'||el.closest('button')||el.closest('a');
+        dot.classList.toggle('expanded', !!interactive);
+        ring.classList.toggle('expanded', !!interactive);
+      });
+      (function animateRing(){
+        rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+        ring.style.left=rx+'px'; ring.style.top=ry+'px';
+        requestAnimationFrame(animateRing);
+      })();
+    </script>
+  </body>
+</html>

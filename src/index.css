@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { cursor: none !important; }
+  html { scroll-behavior: smooth; }
+  body { background-color: #0D0D0D; color: #FAFAFA; font-family: 'Jost', system-ui, sans-serif; font-weight: 300; overflow-x: hidden; }
+  ::selection { background: rgba(201,169,110,0.2); color: #FAFAFA; }
+}
+
+@layer components {
+  .btn-gold {
+    @apply font-sans font-medium text-[10px] tracking-[0.3em] uppercase text-gold border border-gold/30 px-8 py-4 transition-all duration-500 relative overflow-hidden;
+  }
+  .btn-gold::before { content: ''; @apply absolute inset-0 bg-gold translate-y-full transition-transform duration-500; transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+  .btn-gold:hover::before { @apply translate-y-0; }
+  .btn-gold:hover { @apply text-bg; }
+  .btn-gold span { @apply relative z-10; }
+  .btn-ghost { @apply font-sans text-[10px] tracking-[0.3em] uppercase text-snow/50 border border-snow/10 px-8 py-4 transition-all duration-500 hover:text-snow hover:border-snow/30; }
+  .overline { @apply font-sans font-medium text-[10px] tracking-[0.4em] uppercase text-gold/70; }
+  .gold-line { @apply h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent; }
+}
+
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: #0D0D0D; }
+::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); }
+
+.article-scroll::-webkit-scrollbar {
+  width: 2px;
+}
+.article-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.article-scroll::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 110, 0.3);
+}
+
+/* Hero scroll-down arrow bounce */
+.hero-scroll-arrow {
+  animation: heroArrowBounce 2s ease-in-out infinite;
+}
+@keyframes heroArrowBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* Contact form input placeholders */
+.contact-input::placeholder {
+  color: rgba(250, 250, 250, 0.30);
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+.contact-input:focus::placeholder {
+  color: rgba(250, 250, 250, 0.15);
+}
