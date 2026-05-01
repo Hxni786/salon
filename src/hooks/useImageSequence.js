@@ -64,37 +64,48 @@ export function useImageSequence({ folder, frameCount, filePattern, scrollRef })
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, dw, dh)
   }, [])
 
-  // Preload all frames in parallel
+  // Sequential Preloader to avoid network congestion on tunnels
   useEffect(() => {
+    let isMounted = true
     let loadedCount = 0
     images.current = new Array(frameCount)
 
-    const promises = Array.from({ length: frameCount }, (_, i) => {
-      return new Promise((resolve) => {
-        const img = new Image()
-        const padLen = frameCount > 99 ? 3 : 2
-        const paddedIndex = String(i).padStart(padLen, '0')
-        img.src = `${folder}/${filePattern.replace('{n}', paddedIndex)}`
-        img.onload = () => {
-          images.current[i] = img
-          loadedCount++
-          setLoadProgress(Math.round((loadedCount / frameCount) * 100))
-          resolve()
-        }
-        img.onerror = () => {
-          loadedCount++
-          setLoadProgress(Math.round((loadedCount / frameCount) * 100))
-          resolve()
-        }
-      })
-    })
+    const loadImagesSequentially = async () => {
+      for (let i = 0; i < frameCount; i++) {
+        if (!isMounted) return
 
-    Promise.all(promises).then(() => {
-      setIsLoaded(true)
-      if (images.current[0]) {
-        drawFrame(images.current[0])
+        await new Promise((resolve) => {
+          const img = new Image()
+          const padLen = frameCount > 99 ? 3 : 2
+          const paddedIndex = String(i).padStart(padLen, '0')
+          img.src = `${folder}/${filePattern.replace('{n}', paddedIndex)}`
+          
+          img.onload = () => {
+            images.current[i] = img
+            loadedCount++
+            setLoadProgress(Math.round((loadedCount / frameCount) * 100))
+            // Small throttle to avoid hitting Vercel rate limits/WAF
+            setTimeout(resolve, 20)
+          }
+          img.onerror = () => {
+            loadedCount++
+            setLoadProgress(Math.round((loadedCount / frameCount) * 100))
+            setTimeout(resolve, 20)
+          }
+        })
       }
-    })
+
+      if (isMounted) {
+        setIsLoaded(true)
+        if (images.current[0]) {
+          drawFrame(images.current[0])
+        }
+      }
+    }
+
+    loadImagesSequentially()
+
+    return () => { isMounted = false }
   }, [folder, frameCount, filePattern, drawFrame])
 
   // Scroll tracking
